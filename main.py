@@ -2,7 +2,7 @@ import random
 
 table = [[0] * 9] * 9
 
-numbers = [i for i in range(1, 10)]
+numbers = [num for num in range(1, 10)]
 
 def shuffle():
 
