@@ -2,10 +2,7 @@ from uui import *
 
 
 def start():
-    res = make_table()
-    if res == "reset":
-        start()
-    print_table()
+    printBoard(makeBoard())
 
 
 if __name__ == "__main__":

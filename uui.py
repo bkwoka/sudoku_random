@@ -1,131 +1,62 @@
 import random
-import sys
-sys.setrecursionlimit(20000)
-table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
 numbers = [1,2,3,4,5,6,7,8,9]
 
-def get_table():
-    table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
-    return table
+def makeBoard():
+    board = None
+    while board is None:
+        board = attemptBoard()
+    return board
+
+def attemptBoard():
+    board = [[None for _ in range(9)] for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            checking = numbers[:]
+            random.shuffle(checking)
+            x = -1
+            loopStart = 0
+            while board[i][j] is None:
+                x += 1
+                if x == 9:
+                    #No number is valid in this cell, start over
+                    return None
+                checkMe = [checking[x],True]
+                if checkMe in board[i]:
+                    #If it's already in this row
+                    continue
+                checkis = False
+                for checkRow in board:
+                    if checkRow[j] == checkMe:
+                        #If it's already in this column
+                        checkis = True
+                if checkis: continue
+                #Check if the number is elsewhere in this 3x3 grid based on where this is in the 3x3 grid
+                if i % 3 == 1:
+                    if   j % 3 == 0 and checkMe in (board[i-1][j+1],board[i-1][j+2]): continue
+                    elif j % 3 == 1 and checkMe in (board[i-1][j-1],board[i-1][j+1]): continue
+                    elif j % 3 == 2 and checkMe in (board[i-1][j-1],board[i-1][j-2]): continue
+                elif i % 3 == 2:
+                    if   j % 3 == 0 and checkMe in (board[i-1][j+1],board[i-1][j+2],board[i-2][j+1],board[i-2][j+2]): continue
+                    elif j % 3 == 1 and checkMe in (board[i-1][j-1],board[i-1][j+1],board[i-2][j-1],board[i-2][j+1]): continue
+                    elif j % 3 == 2 and checkMe in (board[i-1][j-1],board[i-1][j-2],board[i-2][j-1],board[i-2][j-2]): continue
+                #If we've reached here, the number is valid.
+                board[i][j] = checkMe
+    return board
 
 
-def shuffle():
-    shuffle_numbers = []
-    copy_numbers = numbers[:]
-    while copy_numbers:
-        rand = random.randint(0, len(copy_numbers) - 1)
-        shuffle_numbers.append(copy_numbers[rand])
-        copy_numbers.pop(rand)
-
-    return shuffle_numbers
-
-
-def elements_in_line(element):
-
-    if element in range(0, 3):
-        elements_to_compare = list(range(0, 3))
-    elif element in range(3, 6):
-        elements_to_compare = list(range(3, 6))
-    else:
-        elements_to_compare = list(range(6, 9))
-
-    return elements_to_compare
-
-
-def check_in_line(num_block, index_num, number):
-
-    blocks_to_compare = elements_in_line(num_block)
-    blocks_to_compare.remove(num_block)
-    indx_num_to_compare = elements_in_line(index_num)
-
-    for index in blocks_to_compare:
-        for check_num in indx_num_to_compare:
-            if number != table[index][check_num]:
-                continue
-            else:
-                return False
-    return True
-
-def elements_in_column(element):
-
-    if element in range(0, 7, 3):
-        elements_to_compare = list(range(0, 7, 3))
-    elif element in range(1, 8, 3):
-        elements_to_compare = list(range(1, 8, 3))
-    else:
-        elements_to_compare = list(range(2, 9, 3))
-
-    return elements_to_compare
-
-
-def check_in_column(num_block, index_num, number):
-
-    blocks_to_compare = elements_in_column(num_block)
-    blocks_to_compare.remove(num_block)
-    index_num_to_compare = elements_in_column(index_num)
-
-    for index in blocks_to_compare:
-        for check_num in index_num_to_compare:
-            if number != table[index][check_num]:
-                continue
-            else:
-                return False
-    return True
-
-
-def check_in_block(num_block, number):
-    if not number in table[num_block]:
-        return True
-    else:
-        return False
-
-
-
-loop = 0
-loop1 = 0
-
-def make_table():
-    global loop
-    global loop1
-    loop += 1
-    loop1 += 1
-    if loop == 300:
-        global table
-        table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
-        loop = 0
-        return "reset"
-
-    list_of_num = shuffle()
-    list_blocks_for_make = [0,2,6,8,1,3,5,7,4]
-    index = 0
-    while list_blocks_for_make:
-        while 0 in table[list_blocks_for_make[0]]:
-            if index == 9:
-                make_table()
-            while index < 9:
-
-                number = list_of_num[index]
-                condition_1 = check_in_line(list_blocks_for_make[0], index, number)
-                condition_2 = check_in_column(list_blocks_for_make[0], index, number)
-                condition_3 = check_in_block(list_blocks_for_make[0], number)
-
-                if condition_1 and condition_2 and condition_3:
-                    table[list_blocks_for_make[0]][index] = number
-                else:
-                    index += 1
-        list_blocks_for_make.pop(0)
-
-
-
-
-def print_table():
-    print(loop1)
-    for i in range(0, 9, 3):
-        print("")
-        for j in range(0, 9, 3):
-            print("{} {} {}  {} {} {}  {} {} {}".format(
-
-                table[i + 0][j], table[i + 0][j + 1], table[i + 0][j + 2],
-                table[i + 1][j], table[i + 1][j + 1], table[i + 1][j + 2],
-                table[i + 2][j], table[i + 2][j + 1], table[i + 2][j + 2],
-            ))
+def printBoard(board):
+    spacer = "++---+---+---++---+---+---++---+---+---++"
+    print (spacer.replace('-','='))
+    for i,line in enumerate(board):
+        print ("|| {} | {} | {} || {} | {} | {} || {} | {} | {} ||".format(
+                    line[0][0] if line[0][1] else ' ',
+                    line[1][0] if line[1][1] else ' ',
+                    line[2][0] if line[2][1] else ' ',
+                    line[3][0] if line[3][1] else ' ',
+                    line[4][0] if line[4][1] else ' ',
+                    line[5][0] if line[5][1] else ' ',
+                    line[6][0] if line[6][1] else ' ',
+                    line[7][0] if line[7][1] else ' ',
+                    line[8][0] if line[8][1] else ' ',))
+        if (i+1) % 3 == 0: print(spacer.replace('-','='))
+        else: print(spacer)
