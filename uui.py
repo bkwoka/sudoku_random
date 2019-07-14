@@ -1,8 +1,10 @@
 import random
 import sys
+
 sys.setrecursionlimit(20000)
 table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
 numbers = [1,2,3,4,5,6,7,8,9]
+loop = 0
 
 def get_table():
     table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
@@ -10,13 +12,8 @@ def get_table():
 
 
 def shuffle():
-    shuffle_numbers = []
-    copy_numbers = numbers[:]
-    while copy_numbers:
-        rand = random.randint(0, len(copy_numbers) - 1)
-        shuffle_numbers.append(copy_numbers[rand])
-        copy_numbers.pop(rand)
-
+    shuffle_numbers = numbers[:]
+    random.shuffle(shuffle_numbers)
     return shuffle_numbers
 
 
@@ -80,15 +77,9 @@ def check_in_block(num_block, number):
         return False
 
 
-
-loop = 0
-loop1 = 0
-
 def make_table():
     global loop
-    global loop1
     loop += 1
-    loop1 += 1
     if loop == 300:
         global table
         table = [[0 for _ in range(0, 9)]for _ in range(0, 9)]
@@ -116,10 +107,7 @@ def make_table():
         list_blocks_for_make.pop(0)
 
 
-
-
 def print_table():
-    print(loop1)
     for i in range(0, 9, 3):
         print("")
         for j in range(0, 9, 3):
