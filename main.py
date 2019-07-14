@@ -1,11 +1,10 @@
 from uui import *
 
 
-
 def start():
-    table[0] = shuffle()
-    table[8] = shuffle()
-    make_table()
+    res = make_table()
+    if res == "reset":
+        start()
     print_table()
 
 
